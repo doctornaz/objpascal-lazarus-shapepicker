@@ -1,0 +1,100 @@
+object Form1: TForm1
+  Left = 340
+  Height = 500
+  Top = 68
+  Width = 600
+  Caption = 'Form1'
+  ClientHeight = 480
+  ClientWidth = 600
+  Menu = MainMenu1
+  OnCreate = FormCreate
+  LCLVersion = '1.2.0.3'
+  object Izquierda: TArrow
+    Left = 16
+    Height = 20
+    Top = 428
+    Width = 20
+    ArrowColor = clRed
+    Constraints.MinHeight = 8
+    Constraints.MinWidth = 8
+  end
+  object Arriba: TArrow
+    Left = 38
+    Height = 20
+    Top = 408
+    Width = 20
+    ArrowColor = clRed
+    ArrowType = atUp
+    Constraints.MinHeight = 8
+    Constraints.MinWidth = 8
+  end
+  object Derecha: TArrow
+    Left = 62
+    Height = 20
+    Top = 428
+    Width = 20
+    ArrowColor = clRed
+    ArrowType = atRight
+    Constraints.MinHeight = 8
+    Constraints.MinWidth = 8
+  end
+  object Abajo: TArrow
+    Left = 38
+    Height = 20
+    Top = 448
+    Width = 20
+    ArrowColor = clRed
+    ArrowType = atDown
+    Constraints.MinHeight = 8
+    Constraints.MinWidth = 8
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 15
+    Top = 344
+    Width = 40
+    Caption = 'Colores'
+    ParentColor = False
+  end
+  object ColorBox1: TColorBox
+    Left = 8
+    Height = 22
+    Top = 360
+    Width = 100
+    ItemHeight = 16
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    Left = 432
+    Height = 15
+    Top = 232
+    Width = 55
+    Caption = 'Dibujando'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 192
+    Height = 15
+    Top = 232
+    Width = 84
+    Caption = 'Forma a Dibujar'
+    ParentColor = False
+  end
+  object MainMenu1: TMainMenu
+    left = 544
+    top = 8
+    object MenuItem1: TMenuItem
+      Caption = 'Iniciar'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Rotate'
+      object MenuItem3: TMenuItem
+        Caption = 'Rotar Horizontalmente (X)'
+      end
+      object MenuItem4: TMenuItem
+        Caption = 'Rotar Verticalmente (Y)'
+      end
+    end
+  end
+end
