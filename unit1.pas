@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Menus,
-  StdCtrls, ExtCtrls, Arrow, ColorBox, Variants;
+  StdCtrls, ExtCtrls, Arrow, ColorBox, Grids, Variants;
 
 type
 
@@ -44,7 +44,7 @@ type
 
 var
   Form1: TForm1;
-  F, G, E, H : TFigura;      //Flecha, Tetris, E, H
+  E, F, G, H : TFigura;      //Flecha, Tetris, E, H
   T : TMatriz;
   x0, y0 : INTEGER;
 
@@ -137,17 +137,32 @@ end;
 procedure Colorear(Relleno : INTEGER);
 var x, y : INTEGER;
 begin
-  //x := (F[1].x + F[2].x + F[3].x) DIV 3;
-  //y := (F[1].y + F[2].y + F[3].y) DIV 3;
-  //Form1.Canvas.Brush.Color := Relleno;
-  //Form1.Canvas.FloodFill(x, y, clBLUE, fsBorder);
+     Form1.Canvas.Brush.Color := Relleno;
+     //E
+     x := (E[1].x + E[2].x + E[3].x + E[4].x + E[5].x + E[6].x + E[7].x + E[8].x + E[9].x + E[10].x + E[11].x + E[12].x) DIV 12;
+     y := (E[1].y + E[2].y + E[3].y + E[4].y + E[5].y + E[6].y + E[7].y + E[8].y + E[9].y + E[10].y + E[11].y + E[12].y) DIV 12;
+     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
+     //F
+     x := (F[1].x + F[2].x + F[3].x + F[4].x + F[5].x + F[6].x + F[7].x + F[8].x) DIV 8;
+     y := (F[1].y + F[2].y + F[3].y + F[4].y + F[5].y + F[6].y + F[7].y + F[8].y) DIV 8;
+     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
+     //G
+     x := (G[1].x + G[2].x + G[3].x + G[4].x + G[5].x + G[6].x + G[7].x + G[8].x + G[9].x) DIV 9;
+     y := (G[1].y + G[2].y + G[3].y + G[4].y + G[5].y + G[6].y + G[7].y + G[8].y + G[9].y) DIV 9;
+     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
+     //H
+     x := (H[1].x + H[2].x + H[3].x + H[4].x + H[5].x + H[6].x + H[7].x + H[8].x + H[9].x + H[10].x + H[11].x + H[12].x) DIV 12;
+     y := (H[1].y + H[2].y + H[3].y + H[4].y + H[5].y + H[6].y + H[7].y + H[8].y + H[9].y + H[10].y + H[11].y + H[12].y) DIV 12;
+     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
+
 end;
 
 procedure Dibujar;
 Begin
-  Form1.Canvas.Pen.Color := clBLUE;
+  Form1.Canvas.Pen.Color := clBlack;
+  Form1.Canvas.Pen.Width:= 2;
   Trazar;
-  Colorear(clYELLOW);
+  Colorear(clYellow);
 end;
 
 procedure Borrar;
@@ -196,5 +211,4 @@ begin
   Dibujar;
 end;
 
-end.
-         .
+end.        .
