@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Menus,
-  StdCtrls, ExtCtrls, Arrow, ColorBox, Grids, Variants;
+  StdCtrls, ExtCtrls, ColorBox, Grids, Variants;
 
 type
 
@@ -15,200 +15,234 @@ type
   TForm1 = class(TForm)
     ColorBox1: TColorBox;
     Dibujo: TButton;
-    Izquierda: TArrow;
-    Arriba: TArrow;
-    Derecha: TArrow;
-    Abajo: TArrow;
+    Edit1: TEdit;
+    Edit2: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     MainMenu1: TMainMenu;
     MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
-    MenuItem4: TMenuItem;
+    GenFigura: TMenuItem;
+    MenuItem5: TMenuItem;
+    Panel1: TPanel;
+    RadioButton1: TRadioButton;
+    RadioButton2: TRadioButton;
+    RadioButton3: TRadioButton;
+    RadioButton4: TRadioButton;
+    RadioGroup1: TRadioGroup;
     procedure FormCreate(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
+    procedure GenFiguraClick(Sender: TObject);
+    procedure MenuItem5Click(Sender: TObject);
+    procedure RadioButton1Change(Sender: TObject);
+    procedure RadioButton2Change(Sender: TObject);
+    procedure RadioButton3Change(Sender: TObject);
+    procedure RadioButton4Change(Sender: TObject);
   private
     { private declarations }
   public
     { public declarations }
   end;
 
-  TPunto = RECORD          //Cada figura comprende de un x, y para ser dibujada.
-    x, y : INTEGER;
-  END;
+  Figura = Object
+    x, y: array [1..12] of integer;
+    cx, cy: Integer;
+  end;
 
-  TFigura = ARRAY[1..12] OF TPunto;
-  TMatriz = ARRAY[1..3, 1..3] OF Double;
+  TMatriz = ARRAY[1..12, 1..12] OF Double;
+
 
 var
   Form1: TForm1;
-  E, F, G, H : TFigura;      //Flecha, Tetris, E, H
+  Flecha, Tetris, E, H: Figura;
   T : TMatriz;
   x0, y0 : INTEGER;
+  Colores: ARRAY of string;
 
 implementation
 
 {$R *.lfm}
 
 Procedure Iniciar;
+var i: Integer;
 Begin
   //Points of the E figure.
-  E[1].x :=   30; E[1].y := 30;
-  E[2].x :=  120; E[2].y := 30;
-  E[3].x :=  120; E[3].y := 60;
-  E[4].x :=   60; E[4].y := 60;
-  E[5].x :=   60; E[5].y := 90;
-  E[6].x :=   90; E[6].y := 90;
-  E[7].x :=   90; E[7].y := 120;
-  E[8].x :=   60; E[8].y := 120;
-  E[9].x :=   60; E[9].y := 150;
-  E[10].x := 120; E[10].y := 150;
-  E[11].x := 120; E[11].y := 180;
-  E[12].x :=  30; E[12].y := 180;
-  //Points of the "Tetris" figure.
-  F[1].x :=  60+80; F[1].y := 30;
-  F[2].x :=  90+80; F[2].y := 30;
-  F[3].x :=  90+80; F[3].y := 90;
-  F[4].x := 180+80; F[4].y := 90;
-  F[5].x := 180+80; F[5].y := 180;
-  F[6].x := 150+80; F[6].y := 180;
-  F[7].x := 150+80; F[7].y := 120;
-  F[8].x :=  60+80; F[8].y := 120;
+  E.x[1] :=   30;          E.y[1] := 30;
+  E.x[2] :=  E.x[1]+90;    E.y[2] := E.y[1];
+  E.x[3] :=  E.x[1]+90;    E.y[3] := E.y[1]+30;
+  E.x[4] :=  E.x[1]+30;    E.y[4] := E.y[1]+30;
+  E.x[5] :=  E.x[1]+30;    E.y[5] := E.y[1]+60;
+  E.x[6] :=  E.x[1]+60;    E.y[6] := E.y[1]+60;
+  E.x[7] :=  E.x[1]+60;    E.y[7] := E.y[1]+90;
+  E.x[8] :=  E.x[1]+30;    E.y[8] := E.y[1]+90;
+  E.x[9] :=  E.x[1]+30;    E.y[9] := E.y[1]+120;
+  E.x[10] := E.x[1]+90;    E.y[10]:= E.y[1]+120;
+  E.x[11] := E.x[1]+90;    E.y[11]:= E.y[1]+150;
+  E.x[12] := E.x[1];       E.y[12]:= E.y[1]+150;
+  for i:= 1 to 12 do begin
+    E.cx+= E.x[i];
+    E.cy+= E.y[i];
+  end;
+  E.cx := E.cx DIV 12;
+  E.cy := E.cy DIV 12;
+
+  //Tetris Figure
+  Tetris.x[1] := 30;                   Tetris.y[1] := 30;
+  Tetris.x[2] := Tetris.x[1]+30;       Tetris.y[2] := Tetris.y[1];
+  Tetris.x[3] := Tetris.x[1]+30;       Tetris.y[3] := Tetris.y[1]+60;
+  Tetris.x[4] := Tetris.x[1]+120;      Tetris.y[4] := Tetris.y[1]+60;
+  Tetris.x[5] := Tetris.x[1]+120;      Tetris.y[5] := Tetris.y[1]+150;
+  Tetris.x[6] := Tetris.x[1]+90;       Tetris.y[6] := Tetris.y[1]+150;
+  Tetris.x[7] := Tetris.x[1]+90;       Tetris.y[7] := Tetris.y[1]+90;
+  Tetris.x[8] := Tetris.x[1];          Tetris.y[8] := Tetris.y[1]+90;
+  for i:= 1 to 9 do begin
+    Tetris.cx+= Tetris.x[i];
+    Tetris.cy+= Tetris.y[i];
+  end;
+  Tetris.cx := Tetris.cx DIV 8;
+  Tetris.cy := Tetris.cy DIV 8;
+
   //Points of the Arrow.
-  G[1].x :=  75+260; G[1].y := 30;
-  G[2].x :=  30+260; G[2].y := 60;
-  G[3].x :=  60+260; G[3].y := 60;
-  G[4].x :=  60+260; G[4].y := 150;
-  G[5].x :=  30+260; G[5].y := 180;
-  G[6].x := 120+260; G[6].y := 180;
-  G[7].x :=  90+260; G[7].y := 150;
-  G[8].x :=  90+260; G[8].y := 60;
-  G[9].x := 120+260; G[9].y := 60;
+  Flecha.x[1] := 75;                    Flecha.y[1] := 30;
+  Flecha.x[2] := Flecha.x[1]-45;        Flecha.y[2] := Flecha.y[1]+30;
+  Flecha.x[3] := Flecha.x[2]+30;        Flecha.y[3] := Flecha.y[1]+30;
+  Flecha.x[4] := Flecha.x[2]+30;        Flecha.y[4] := Flecha.y[1]+120;
+  Flecha.x[5] := Flecha.x[2];           Flecha.y[5] := Flecha.y[1]+150;
+  Flecha.x[6] := Flecha.x[2]+90;        Flecha.y[6] := Flecha.y[1]+150;
+  Flecha.x[7] := Flecha.x[2]+60;        Flecha.y[7] := Flecha.y[1]+120;
+  Flecha.x[8] := Flecha.x[2]+60;        Flecha.y[8] := Flecha.y[1]+30;
+  Flecha.x[9] := Flecha.x[2]+90;        Flecha.y[9] := Flecha.y[1]+30;
+    for i:= 1 to 8 do begin
+      Flecha.cx+= Flecha.x[i];
+      Flecha.cy+= Flecha.y[i];
+    end;
+  Flecha.cx := Flecha.cx DIV 8;
+  Flecha.cy := Flecha.cy DIV 8;
+
   //H
-  H[1].x :=   30+400; H[1].y := 30;
-  H[2].x :=   60+400; H[2].y := 30;
-  H[3].x :=   60+400; H[3].y := 90;
-  H[4].x :=   120+400; H[4].y := 90;
-  H[5].x :=   120+400; H[5].y := 30;
-  H[6].x :=   150+400; H[6].y := 30;
-  H[7].x :=   150+400; H[7].y := 180;
-  H[8].x :=   120+400; H[8].y := 180;
-  H[9].x :=   120+400; H[9].y := 120;
-  H[10].x :=  60+400; H[10].y := 120;
-  H[11].x :=   60+400; H[11].y := 180;
-  H[12].x :=   30+400; H[12].y := 180;
+  H.x[1] := 30;               H.y[1] := 30;
+  H.x[2] := H.x[1]+30;        H.y[2] := H.y[1];
+  H.x[3] := H.x[1]+30;        H.y[3] := H.y[1]+60;
+  H.x[4] := H.x[1]+90;        H.y[4] := H.y[1]+60;
+  H.x[5] := H.x[1]+90;        H.y[5] := H.y[1];
+  H.x[6] := H.x[1]+120;       H.y[6] := H.y[1];
+  H.x[7] := H.x[1]+120;       H.y[7] := H.y[1]+150;
+  H.x[8] := H.x[1]+90;        H.y[8] := H.y[1]+150;
+  H.x[9] := H.x[1]+90;        H.y[9] := H.y[1]+90;
+  H.x[10]:= H.x[1]+30;        H.y[10] := H.y[1]+90;
+  H.x[11]:= H.x[1]+30;        H.y[11] := H.y[1]+150;
+  H.x[12]:= H.x[1];           H.y[12] := H.y[1]+150;
+  for i:= 1 to 12 do begin
+    H.cx+= H.x[i];
+    H.cy+= H.y[i];
+  end;
+  H.cx := H.cx DIV 12;
+  H.cy := H.cy DIV 12;
 end;
 
-Procedure Trazar;
-     var i: Integer;
-Begin
-  //Dibujar E
-  Form1.Canvas.MoveTo(E[1].x, E[1].y);
-  for i := 1 to 12 do begin
-    Form1.Canvas.LineTo(E[i].x, E[i].y);
-  end;
-  Form1.Canvas.LineTo(E[1].x, E[1].y);
-
-  //Dibujar Flecha
-  Form1.Canvas.MoveTo(F[1].x, F[1].y);
-    for i := 1 to 8 do begin
-    Form1.Canvas.LineTo(F[i].x, F[i].y);
-  end;
-    Form1.Canvas.LineTo(F[1].x, F[1].y);
-
-  //Dibujar Tetris
-  Form1.Canvas.MoveTo(G[1].x, G[1].y);
-    for i := 1 to 9 do begin
-    Form1.Canvas.LineTo(G[i].x, G[i].y);
-  end;
-    Form1.Canvas.LineTo(G[1].x, G[1].y);
-
-    //Dibujar H
-  Form1.Canvas.MoveTo(H[1].x, H[1].y);
-    for i := 1 to 12 do begin
-    Form1.Canvas.LineTo(H[i].x, H[i].y);
-  end;
-    Form1.Canvas.LineTo(H[1].x, H[1].y);
-
-end;
-
-procedure Colorear(Relleno : INTEGER);
-var x, y : INTEGER;
+Procedure tFig(fig: Figura; c, x, y: Integer);
+var i: Integer;
 begin
-     Form1.Canvas.Brush.Color := Relleno;
-     //E
-     x := (E[1].x + E[2].x + E[3].x + E[4].x + E[5].x + E[6].x + E[7].x + E[8].x + E[9].x + E[10].x + E[11].x + E[12].x) DIV 12;
-     y := (E[1].y + E[2].y + E[3].y + E[4].y + E[5].y + E[6].y + E[7].y + E[8].y + E[9].y + E[10].y + E[11].y + E[12].y) DIV 12;
-     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
-     //F
-     x := (F[1].x + F[2].x + F[3].x + F[4].x + F[5].x + F[6].x + F[7].x + F[8].x) DIV 8;
-     y := (F[1].y + F[2].y + F[3].y + F[4].y + F[5].y + F[6].y + F[7].y + F[8].y) DIV 8;
-     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
-     //G
-     x := (G[1].x + G[2].x + G[3].x + G[4].x + G[5].x + G[6].x + G[7].x + G[8].x + G[9].x) DIV 9;
-     y := (G[1].y + G[2].y + G[3].y + G[4].y + G[5].y + G[6].y + G[7].y + G[8].y + G[9].y) DIV 9;
-     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
-     //H
-     x := (H[1].x + H[2].x + H[3].x + H[4].x + H[5].x + H[6].x + H[7].x + H[8].x + H[9].x + H[10].x + H[11].x + H[12].x) DIV 12;
-     y := (H[1].y + H[2].y + H[3].y + H[4].y + H[5].y + H[6].y + H[7].y + H[8].y + H[9].y + H[10].y + H[11].y + H[12].y) DIV 12;
-     Form1.Canvas.FloodFill(x, y, clBlack, fsBorder);
+  Form1.Canvas.MoveTo(fig.x[1]+x, fig.y[1]+y);
+  for i:= Low(fig.x) to High(fig.x) do begin
+    if fig.x[i] > 0 then
+       Form1.Canvas.LineTo(fig.x[i]+x, fig.y[i]+y);
+  end;
+  Form1.Canvas.LineTo(fig.x[1]+x, fig.y[1]+y);
 
+  //Pintar figura
+  Form1.Canvas.Brush.Color := c;
+  Form1.Canvas.FloodFill(fig.cx+x, fig.cy+y, clBlack, fsBorder);
 end;
 
-procedure Dibujar;
+procedure Ejemplos;
 Begin
   Form1.Canvas.Pen.Color := clBlack;
   Form1.Canvas.Pen.Width:= 2;
-  Trazar;
-  Colorear(clYellow);
-end;
-
-procedure Borrar;
-begin
-  Colorear(clBtnFace);
-  Form1.Canvas.Pen.Color := clBtnFace;
-  Trazar;
-end;
-
-Procedure Coordenadas;
-Begin
+  tFig(E, clYellow, 0, 0);
+  tFig(H, clRed, 100, 0);
+  tFig(Tetris, clBlue, 230, 0);
+  tFig(Flecha, clMaroon, 360, 0);
 end;
 
 Procedure Multiplicar;
   VAR M, P : TMatriz;
-      i, j, k: Integer;
+      i, j, k: Integer; //Para los for.
 Begin
-  for i := 1 to 3 do
-  begin
-    M[i, 1] := F[i].x; M[i, 2] := F[i].y; M[i, 3] := 1;
+  for i := 1 to 9 do begin
+    M[i, 1] := Flecha.x[i];
+    M[i, 2] := Flecha.y[i];
+    M[i, 3] := 1;
   end;
-  for i := 1 to 3 do
-    for j := 1 to 3 do
-    begin
+  for i := 1 to 9 do
+    for j := 1 to 9 do begin
       P[i, j] := 0;
-      for k := 1 to 3 do
+      for k := 1 to 9 do
           P[i, j] := P[i, j] + M[i, k] * T[k, j];
     end;
-    for i := 1 to 3 do
-    begin
-      F[i].x := ROUND(P[i, 1]);
-      F[i].y := ROUND(P[i, 2]);
+    for i := 1 to 9 do begin
+      Flecha.x[i] := ROUND(P[i, 1]);
+      Flecha.y[i] := ROUND(P[i, 2]);
     end;
-  Coordenadas;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Iniciar;
-  Coordenadas;
   Form1.Canvas.Pen.Color := clBackground;
 end;
 
-procedure TForm1.MenuItem1Click(Sender: TObject);
+procedure TForm1.GenFiguraClick(Sender: TObject);
+var i: Integer;
 begin
-  Dibujar;
+  Randomize;
+  i := Random(4);
+  Edit1.Text:= IntToStr(i);
+  Edit2.Text:= IntToStr(Random(Color));
+  Form1.Canvas.Pen.Color := clBlack;
+  Form1.Canvas.Pen.Width:= 2;
+  Form1.Canvas.Brush.Color := clBtnFace;
+  Form1.Canvas.FillRect(270,260,410,430);
+  case i of
+       0: tFig(E, Random(Color), 250, 240);
+       1: tFig(H, Random(Color), 250, 240);
+       2: tFig(Tetris, Random(Color), 250, 240);
+       3: tFig(Flecha, Random(Color), 250, 240);
+  end;
 end;
 
-end.        .
+procedure TForm1.MenuItem5Click(Sender: TObject);
+begin
+  Ejemplos;
+  RadioGroup1.Enabled:= true;
+  GenFigura.Enabled:= true;
+end;
+
+procedure TForm1.RadioButton1Change(Sender: TObject);
+begin
+  Form1.Canvas.Brush.Color := clBtnFace;
+  Form1.Canvas.FillRect(430,260,580,430);
+  tFig(E, ColorBox1.Selected, 420, 240);
+end;
+
+procedure TForm1.RadioButton2Change(Sender: TObject);
+begin
+  Form1.Canvas.Brush.Color := clBtnFace;
+  Form1.Canvas.FillRect(430,260,580,430);
+  tFig(H, ColorBox1.Selected, 420, 240);
+end;
+
+procedure TForm1.RadioButton3Change(Sender: TObject);
+begin
+  Form1.Canvas.Brush.Color := clBtnFace;
+  Form1.Canvas.FillRect(430,260,580,430);
+  tFig(Tetris, ColorBox1.Selected, 420, 240);
+end;
+
+procedure TForm1.RadioButton4Change(Sender: TObject);
+begin
+  Form1.Canvas.Brush.Color := clBtnFace;
+  Form1.Canvas.FillRect(430,260,580,430);
+  tFig(Flecha, ColorBox1.Selected, 420, 240);
+end;
+
+end.
